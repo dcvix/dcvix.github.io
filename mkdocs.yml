@@ -1,0 +1,70 @@
+site_name: dcvix
+
+theme:
+  name: material
+
+  palette:      
+    - scheme: slate
+      primary: blue grey
+      accent: light blue
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+
+    - scheme: default
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+
+markdown_extensions:
+  - pymdownx.superfences
+  - pymdownx.details
+  - pymdownx.tabbed:
+      alternate_style: true
+
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+
+extra_javascript:
+  - https://unpkg.com/mermaid@10/dist/mermaid.min.js
+
+nav:
+  - Home: index.md
+
+  - Getting Started:
+      - Overview: getting-started/index.md
+      - Quickstart: getting-started/quickstart.md
+      - Installation: getting-started/installation.md
+
+  - Architecture:
+      - Overview: architecture/overview.md
+      - Communication: architecture/communication.md
+      - Security: architecture/security.md
+
+  - Components:
+      - Launcher: components/launcher.md
+      - Agent: components/agent.md
+      - Director: components/director.md
+
+  - Configuration:
+      - Overview: configuration/index.md
+      - Launcher: configuration/launcher.md
+      - Agent: configuration/agent.md
+      - Director: configuration/director.md
+
+  - Deployment:
+      - Linux: deployment/linux.md
+      - Windows: deployment/windows.md
+
+  - Building:
+      - Environment: building/index.md
+      - Launcher: building/launcher.md
+      - Agent: building/agent.md
+      - Director: building/director.md
+
+  - Operations:
+      - Troubleshooting: operations/troubleshooting.md
+      - Logging: operations/logging.md
