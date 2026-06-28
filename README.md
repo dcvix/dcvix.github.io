@@ -1,13 +1,11 @@
 > [!WARNING]
-> This project is a work in progress. It is advised that you do not use this in production
-> unless you are willing to encounter bugs, papercuts or your computer on fire along the way.
+> dcvix is under active development. Do not deploy in production environments unless you are prepared to handle incomplete features, breaking changes, and unexpected behavior.
 
 <p align="center">
   <img src="docs/assets/images/dcvixLogoDarkBG.png" width="300" alt="Logo">
 </p>
 
-dcvix is an orchestrator for the Amazon DCV remote desktop system focused on simplicity, lightweight operation, and security.
-It enables small to medium-sized organizations to manage the creation of sessions and server pools.
+dcvix is a session and server-pool manager for Amazon DCV. It provides centralized authentication, desktop session lifecycle management, and automatic allocation of DCV servers.
 It consists of three components:
 - The **director** runs on a central server and allows administrators to control desktop access and user authentication. It also acts as a token authenticator.
 - The **agent** runs on workstations, collecting statistics and session information to be sent to the director. It responds to requests for session creation and termination.
