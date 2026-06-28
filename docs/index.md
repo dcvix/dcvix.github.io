@@ -17,6 +17,7 @@ It consists of three components:
 
 ## Quick Links
 
+- [Why dcvix exists?](getting-started/why.md) - Brief introduction
 - [Getting Started](getting-started/quickstart.md) - run dcvix in 5 minutes
 - [Architecture Overview](architecture/overview.md) - understand the system
 - [Components](components/director.md) - what each piece does
