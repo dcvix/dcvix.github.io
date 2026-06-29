@@ -5,7 +5,7 @@
   <img src="docs/assets/images/dcvixLogoDarkBG.png" width="300" alt="Logo">
 </p>
 
-dcvix is a session and server-pool manager for Amazon DCV. It provides centralized authentication, desktop session lifecycle management, and automatic allocation of DCV servers.
+dcvix is a session broker and server-pool manager for Amazon DCV. It provides centralized authentication, desktop session lifecycle management, and automatic allocation of DCV servers.
 It consists of three components:
 - The **director** runs on a central server and allows administrators to control desktop access and user authentication. It also acts as a token authenticator.
 - The **agent** runs on workstations, collecting statistics and session information to be sent to the director. It responds to requests for session creation and termination.

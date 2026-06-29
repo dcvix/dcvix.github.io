@@ -1,4 +1,4 @@
-The director is the central management service. It runs on a server and provides the REST API, admin web UI, CA authority, and user authentication for the dcvix orchestrator.
+The director is the central management service. It runs on a server and provides the REST API, admin web UI, CA authority, and user authentication for the dcvix session broker.
 
 ![dcvix Director](../assets/images/director_02.png)
 

@@ -16,7 +16,7 @@ This is the problem dcvix solves.
 
 ## What is dcvix?
 
-dcvix is a lightweight open-source orchestrator for Amazon DCV remote desktops.
+dcvix is a lightweight open-source session broker for Amazon DCV remote desktops.
 
 It provides the management layer around DCV while keeping the architecture simple:
 
