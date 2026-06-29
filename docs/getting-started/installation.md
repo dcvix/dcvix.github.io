@@ -103,4 +103,4 @@ make rpm
 make installer
 ```
 
-See each component's `README.md` for platform-specific build instructions using docker or podmand for reproducible builds.
+See each component's section in the Building chapter for platform-specific build instructions using docker or podman for reproducible builds.
