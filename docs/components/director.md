@@ -91,7 +91,7 @@ flowchart LR
 ### Admin Login
 
 ```bash
-curl --cacert dcvix-ca.pem \
+curl --cacert ca.pem \
   --cookie-jar cookies.txt \
   -X POST https://127.0.0.1:8445/v1/admin/login \
   -d '{"userID": "'$USERNAME'", "password": "'$PASSWORD'"}'
@@ -100,7 +100,7 @@ curl --cacert dcvix-ca.pem \
 ### List Sessions
 
 ```bash
-curl --cacert dcvix-ca.pem \
+curl --cacert ca.pem \
     --cookie cookies.txt \
     https://127.0.0.1:8445/v1/sessions
 ```
@@ -108,7 +108,7 @@ curl --cacert dcvix-ca.pem \
 ### Close Session
 
 ```bash
-curl --cacert dcvix-ca.pem \
+curl --cacert ca.pem \
     --cookie cookies.txt \
     -X DELETE \
     https://127.0.0.1:8445/v1/sessions/SESSION_ID
@@ -117,7 +117,7 @@ curl --cacert dcvix-ca.pem \
 ### Agent Update
 
 ```bash
-curl --cert dcvix-agent.crt --key dcvix-agent.key --cacert dcvix-ca.pem \
+curl --cert agent.crt --key agent.key --cacert ca.pem \
     -X POST \
     -H "Content-Type: application/json" \
     -d '{
@@ -140,7 +140,7 @@ curl --cert dcvix-agent.crt --key dcvix-agent.key --cacert dcvix-ca.pem \
 ### DCV Gateway Session Resolution
 
 ```bash
-curl --noproxy '*' --cacert dcvix-ca.pem \
+curl --noproxy '*' --cacert ca.pem \
     -X POST \
     -H "Content-Type: application/json" \
     -d '{"sessionId": "autosession", "transport": "XXXX", "clientIpAddress": "127.0.0.1"}' \

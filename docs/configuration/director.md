@@ -11,10 +11,6 @@ The director configuration file (`dcvix-director.conf`) uses INI format with the
 | `policydb_folder` | string | `policydb` | Path to the policy JSON directory |
 | `data_dir` | string | `/var/lib/dcvix-director` | Persistent state directory (CA keys, agents.db, server cert) |
 | `token_key` | string | *(auto-generated)* | Base64-encoded PASETO symmetric key. **Set this to persist tokens across restarts.** |
-| `tls_strict` | bool | `true` | Only accept valid TLS certificates |
-| `ca_file` | string | `certs/dcvix-ca.pem` | CA certificate file path (for agent cert validation) |
-| `ssl_cert_file` | string | `certs/dcvix-director.crt` | Server certificate file path |
-| `ssl_key_file` | string | `certs/dcvix-director.key` | Server private key file path |
 
 ## `[pam_auth]`
 

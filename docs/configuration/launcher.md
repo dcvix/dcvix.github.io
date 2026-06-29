@@ -31,7 +31,7 @@ allow-custom-server=false
 
 The launcher looks for `dcvix-launcher.conf` in this order:
 
-1. Path passed via `--config` flag
+1. Path passed via `--conf` flag
 2. OS-specific user config directory:
    - Linux: `~/.config/net.cortassa.dcvix-launcher/dcvix-launcher.conf`
    - macOS: `~/Library/Application Support/net.cortassa.dcvix-launcher/dcvix-launcher.conf`

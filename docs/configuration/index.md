@@ -5,10 +5,10 @@ All dcvix components use INI-format configuration files. Each component has its 
 The configuration file is discovered in this order:
 
 1. Path specified by the `--conf` command-line flag
-2. `dcvix-{component}.conf` in the working directory
-3. Platform-specific default path:
+2. Platform-specific default path:
    - Linux: `/etc/dcvix-{component}/dcvix-{component}.conf`
    - Windows: `%ProgramData%\dcvix\{Component}\dcvix-{component}.conf`
+3. `dcvix-{component}.conf` in the working directory
 
 If no config file exists, a default one is generated with commented-out options.
 
