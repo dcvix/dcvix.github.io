@@ -1615,8 +1615,8 @@
 <div class="highlight"><pre><span></span><code>podman<span class="w"> </span>run<span class="w"> </span>-it<span class="w"> </span>--rm<span class="w"> </span>-v<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$PWD</span><span class="s2">&quot;</span>:/workspace<span class="w"> </span>rockylinux:9<span class="w"> </span>bash
 dnf<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>rpm-build<span class="w"> </span>rpmdevtools<span class="w"> </span>make<span class="w"> </span>gcc<span class="w"> </span>systemd<span class="w"> </span>systemd-rpm-macros<span class="w"> </span>pam-devel<span class="w"> </span>npm
 <span class="nb">alias</span><span class="w"> </span><span class="nv">ll</span><span class="o">=</span><span class="s1">&#39;ls -lah&#39;</span>
-curl<span class="w"> </span>-L<span class="w"> </span>-O<span class="w"> </span>https://go.dev/dl/go1.24.4.linux-amd64.tar.gz
-tar<span class="w"> </span>-C<span class="w"> </span>/usr/local<span class="w"> </span>-xzf<span class="w"> </span>go1.24.4.linux-amd64.tar.gz
+curl<span class="w"> </span>-L<span class="w"> </span>-O<span class="w"> </span>https://go.dev/dl/go1.26.3.linux-amd64.tar.gz
+tar<span class="w"> </span>-C<span class="w"> </span>/usr/local<span class="w"> </span>-xzf<span class="w"> </span>go1.26.3.linux-amd64.tar.gz
 <span class="nb">export</span><span class="w"> </span><span class="nv">PATH</span><span class="o">=</span><span class="nv">$PATH</span>:/usr/local/go/bin
 <span class="nb">cd</span><span class="w"> </span>/workspace
 make<span class="w"> </span>rpm
@@ -1626,8 +1626,8 @@ make<span class="w"> </span>rpm
 <div class="highlight"><pre><span></span><code>podman<span class="w"> </span>run<span class="w"> </span>-it<span class="w"> </span>--rm<span class="w"> </span>-v<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$PWD</span><span class="s2">&quot;</span>:/workspace<span class="w"> </span>ubuntu:24.04<span class="w"> </span>bash
 apt<span class="w"> </span>update
 apt<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>ca-certificates<span class="w"> </span>make<span class="w"> </span>curl
-curl<span class="w"> </span>-L<span class="w"> </span>-O<span class="w"> </span>https://go.dev/dl/go1.24.4.linux-amd64.tar.gz
-tar<span class="w"> </span>-C<span class="w"> </span>/usr/local<span class="w"> </span>-xzf<span class="w"> </span>go1.24.4.linux-amd64.tar.gz
+curl<span class="w"> </span>-L<span class="w"> </span>-O<span class="w"> </span>https://go.dev/dl/go1.26.3.linux-amd64.tar.gz
+tar<span class="w"> </span>-C<span class="w"> </span>/usr/local<span class="w"> </span>-xzf<span class="w"> </span>go1.26.3.linux-amd64.tar.gz
 <span class="nb">export</span><span class="w"> </span><span class="nv">PATH</span><span class="o">=</span><span class="nv">$PATH</span>:/usr/local/go/bin
 <span class="nb">cd</span><span class="w"> </span>/workspace
 make<span class="w"> </span>deb
