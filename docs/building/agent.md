@@ -85,8 +85,8 @@ The project uses GitHub Actions to automatically build and publish releases. Whe
 3. Create and push a new tag:
 
 ```bash
-git tag v<version>
-git push origin v<version>
+git tag v<VERSION>
+git push origin v<VERSION>
 ```
 
 The version is derived from the git tag (the `v` prefix is stripped).

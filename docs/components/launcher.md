@@ -8,10 +8,10 @@ Written in Go with the Fyne toolkit, it runs on Linux, Windows and macOS.
 
 | Platform | Package / File |
 |----------|----------------|
-| Debian / Ubuntu | `dcvix-launcher_<version>.deb` |
-| Rocky Linux / RHEL | `dcvix-launcher-<version>.rpm` |
+| Debian / Ubuntu | `dcvix-launcher_<VERSION>.deb` |
+| Rocky Linux / RHEL | `dcvix-launcher-<VERSION>.rpm` |
 | Windows | NSIS installer |
-| macOS | `dcvix-launcher-v<version>-darwin-amd64` tarball |
+| macOS | `dcvix-launcher-v<VERSION>-darwin-amd64` tarball |
 
 ## Responsibility
 

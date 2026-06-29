@@ -56,7 +56,7 @@ net start dcvix-agent
 The launcher is distributed as a tarball:
 
 ```bash
-tar -xzf dcvix-launcher-v<version>-darwin-amd64.tar.gz
+tar -xzf dcvix-launcher-v<VERSION>-darwin-amd64.tar.gz
 cd dcvix-launcher
 ```
 
