@@ -57,30 +57,16 @@ dcvix provides the essential orchestration layer without requiring a large VDI s
 
 dcvix consists of three components:
 
-```
-                 +----------------+
-                 |    Launcher    |
-                 | User interface |
-                 +--------+-------+
-                          |
-                    Authentication
-                          |
-                          v
-                 +----------------+
-                 |    Director    |
-                 | Control plane  |
-                 +--------+-------+
-                          |
-                 Session management
-                          |
-          +---------------+---------------+
-          |                               |
-          v                               v
- +----------------+              +----------------+
- |     Agent      |              |     Agent      |
- |  Workstation   |              |  Workstation   |
- |  DCV Server    |              |  DCV Server    |
- +----------------+              +----------------+
+```mermaid
+flowchart TD
+    Launcher["Launcher<br/>User interface"]
+    Director["Director<br/>Control plane"]
+    Agent1["Agent<br/>Workstation<br/>DCV Server"]
+    Agent2["Agent<br/>Workstation<br/>DCV Server"]
+
+    Launcher -->|Authentication| Director
+    Director -->|Session management| Agent1
+    Director -->|Session management| Agent2
 ```
 
 ## Director
@@ -149,22 +135,10 @@ Think of DCV as the remote desktop engine.
 
 Think of dcvix as the system that decides who can use that engine.
 
-```
-             dcvix
-   +-----------------------+
-   | Identity              |
-   | Access control        |
-   | Scheduling            |
-   | Session lifecycle     |
-   +-----------------------+
-
-             DCV
-   +-----------------------+
-   | Remote graphics       |
-   | Input handling        |
-   | Secure transport      |
-   | Desktop experience    |
-   +-----------------------+
+```mermaid
+flowchart TD
+    dcvix["<b>dcvix</b><br/>Identity<br/>Access control<br/>Scheduling<br/>Session lifecycle"]
+    DCV["<b>DCV</b><br/>Remote graphics<br/>Input handling<br/>Secure transport<br/>Desktop experience"]
 ```
 
 Together they provide a simple, secure, and manageable remote desktop platform.

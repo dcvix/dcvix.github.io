@@ -1,4 +1,4 @@
-dcvix is a three-component orchestrator for Amazon DCV remote desktops. This page explains the system architecture, component relationships, and key lifecycle flows.
+dcvix is a three-component session broker and server-pool manager for Amazon DCV remote desktops. This page explains the system architecture, component relationships, and key lifecycle flows.
 
 ## Three-Tier Model
 
@@ -26,6 +26,106 @@ flowchart LR
 | **Director** | Central server - API, auth, session management, CA authority | Go + React frontend |
 | **Agent** | Per-workstation - DCV session lifecycle, stats reporting, auto-cert management | Go |
 | **Launcher** | End-user GUI - login, server list, launch DCV viewer | Go + Fyne toolkit |
+
+## Session connection flow
+
+```mermaid
+flowchart TB
+    User["User"]
+
+    subgraph Client["Client Machine"]
+        direction TB
+        Launcher["dcvix Launcher"]
+        Viewer["DCV Viewer"]
+    end
+
+    subgraph Control["dcvix Control Plane"]
+        Director["dcvix Director"]
+    end
+
+    subgraph DCVHost["DCV Host"]
+        direction TB
+        Agent["dcvix Agent"]
+        DCV["DCV Server<br/>(User Session)"]
+    end
+
+    User --> Launcher
+
+    Launcher <-->|"1-3. Authenticate,<br/>list hosts, select +<br/>request session"| Director
+    Director -->|"4. Create session"| Agent
+    Agent -->|"5. Create"| DCV
+    DCV -->|"6. Ready"| Agent
+    Agent -->|"7. Session info"| Director
+    Director -->|"8. Token + endpoint"| Launcher
+    Launcher -->|"9. Launch with token"| Viewer
+    Viewer -->|"10. Connect + present token"| DCV
+    DCV <-->|"11-12. Validate token"| Director
+    DCV -->|"13. Desktop session"| Viewer
+```
+
+The dcvix Launcher is the entry point for users. When a user requests a desktop session, the Launcher authenticates with the dcvix Director, which is responsible for authorization and session allocation.
+
+The Director returns the list of available workstations and pools to the Launcher. The user selects the desired workstation. Then the Launcher asks the Director to create the session. The Director instructs the dcvix Agent running on the selected host to create a new DCV session. Once the session is ready, the Director generates a connection token and returns the required connection information to the Launcher.
+
+The Launcher starts the DCV Viewer and passes the connection token to it. The DCV Viewer then connects directly to the DCV Server hosting the session.
+
+During the connection process, the DCV Server validates the token by contacting the dcvix Director. The Director confirms whether the token is valid and authorized, allowing or rejecting the connection.
+
+This architecture keeps the desktop traffic between the user and the DCV Server, while dcvix only manages authentication, authorization, and session lifecycle operations.
+
+## User Authentication Flow
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Launcher
+    participant Director
+    participant AuthBackend as Auth Backend (PAM/LDAP/...)
+
+    User->>Launcher: Enter credentials (+ optional OTP)
+    Launcher->>Director: POST /v1/user/login
+    Director->>AuthBackend: Authenticate (PAM/LDAP/RADIUS/external)
+    AuthBackend-->>Director: success
+    Director->>Director: Generate PASETO v4 token (2h expiry)
+    Director-->>Launcher: 200 OK + PASETO token
+    Launcher->>Launcher: Store token
+    Launcher->>Director: GET /v1/user/servers (session cookie)
+    Director->>Director: Verify token, look up policy (users.json)
+    Director-->>Launcher: 200 OK (server list)
+    Launcher->>User: Display available servers
+```
+
+## Session Lifecycle
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Launcher
+    participant Director
+    participant Agent
+    participant DCV as DCV Server
+
+    User->>Launcher: Select server + session type
+    Launcher->>Director: Forward request (authenticated)
+    Director->>Agent: POST /v1/sessions (mTLS)
+    Agent->>DCV: dcv create-session <params>
+    DCV-->>Agent: Session created
+    Agent-->>Director: 200 OK (session info)
+    Director-->>Launcher: 200 OK (session token)
+    Launcher->>User: Launch dcvviewer
+
+    Note over Agent: Periodic updates
+    Agent->>Director: POST /v1/agent/update (sessions + stats)
+    Note over Director: Updates in-memory session state
+
+    User->>Launcher: Close session
+    Launcher->>Director: DELETE /v1/sessions/{id}
+    Director->>Agent: DELETE /v1/sessions/{id} (mTLS)
+    Agent->>DCV: dcv close-session <id>
+    DCV-->>Agent: Session closed
+    Agent-->>Director: 200 OK
+    Director-->>Launcher: 200 OK
+```
 
 ## Agent Auto-Registration Flow
 
@@ -91,57 +191,3 @@ sequenceDiagram
 ```
 
 The mTLS server uses a `GetCertificate` callback so the renewed cert is picked up without restarting the listener.
-
-## User Authentication Flow
-
-```mermaid
-sequenceDiagram
-    participant User
-    participant Launcher
-    participant Director
-    participant AuthBackend as Auth Backend (PAM/LDAP/...)
-
-    User->>Launcher: Enter credentials (+ optional OTP)
-    Launcher->>Director: POST /v1/user/login
-    Director->>AuthBackend: Authenticate (PAM/LDAP/RADIUS/external)
-    AuthBackend-->>Director: success
-    Director->>Director: Generate PASETO v4 token (2h expiry)
-    Director-->>Launcher: 200 OK + PASETO token
-    Launcher->>Launcher: Store token
-    Launcher->>Director: GET /v1/user/servers (session cookie)
-    Director->>Director: Verify token, look up policy (users.json)
-    Director-->>Launcher: 200 OK (server list)
-    Launcher->>User: Display available servers
-```
-
-## Session Lifecycle
-
-```mermaid
-sequenceDiagram
-    participant User
-    participant Launcher
-    participant Director
-    participant Agent
-    participant DCV as DCV Server
-
-    User->>Launcher: Select server + session type
-    Launcher->>Director: Forward request (authenticated)
-    Director->>Agent: POST /v1/sessions (mTLS)
-    Agent->>DCV: dcv create-session <params>
-    DCV-->>Agent: Session created
-    Agent-->>Director: 200 OK (session info)
-    Director-->>Launcher: 200 OK (session token)
-    Launcher->>User: Launch dcvviewer
-
-    Note over Agent: Periodic updates
-    Agent->>Director: POST /v1/agent/update (sessions + stats)
-    Note over Director: Updates in-memory session state
-
-    User->>Launcher: Close session
-    Launcher->>Director: DELETE /v1/sessions/{id}
-    Director->>Agent: DELETE /v1/sessions/{id} (mTLS)
-    Agent->>DCV: dcv close-session <id>
-    DCV-->>Agent: Session closed
-    Agent-->>Director: 200 OK
-    Director-->>Launcher: 200 OK
-```
