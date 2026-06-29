@@ -1527,7 +1527,7 @@
 </ul>
 <p>This is the problem dcvix solves.</p>
 <h2 id="what-is-dcvix">What is dcvix?</h2>
-<p>dcvix is a lightweight open-source orchestrator for Amazon DCV remote desktops.</p>
+<p>dcvix is a lightweight open-source session broker for Amazon DCV remote desktops.</p>
 <p>It provides the management layer around DCV while keeping the architecture simple:</p>
 <ul>
 <li>
@@ -1565,30 +1565,15 @@
 <p>dcvix provides the essential orchestration layer without requiring a large VDI stack.</p>
 <h2 id="architecture">Architecture</h2>
 <p>dcvix consists of three components:</p>
-<div class="highlight"><pre><span></span><code>                 +----------------+
-                 |    Launcher    |
-                 | User interface |
-                 +--------+-------+
-                          |
-                    Authentication
-                          |
-                          v
-                 +----------------+
-                 |    Director    |
-                 | Control plane  |
-                 +--------+-------+
-                          |
-                 Session management
-                          |
-          +---------------+---------------+
-          |                               |
-          v                               v
- +----------------+              +----------------+
- |     Agent      |              |     Agent      |
- |  Workstation   |              |  Workstation   |
- |  DCV Server    |              |  DCV Server    |
- +----------------+              +----------------+
-</code></pre></div>
+<pre class="mermaid"><code>flowchart TD
+    Launcher["Launcher&lt;br/&gt;User interface"]
+    Director["Director&lt;br/&gt;Control plane"]
+    Agent1["Agent&lt;br/&gt;Workstation&lt;br/&gt;DCV Server"]
+    Agent2["Agent&lt;br/&gt;Workstation&lt;br/&gt;DCV Server"]
+
+    Launcher --&gt;|Authentication| Director
+    Director --&gt;|Session management| Agent1
+    Director --&gt;|Session management| Agent2</code></pre>
 <h2 id="director">Director</h2>
 <p>The Director is the central management component.</p>
 <p>It provides:</p>
@@ -1641,22 +1626,9 @@
 <h2 id="the-relationship-between-dcv-and-dcvix">The relationship between DCV and dcvix</h2>
 <p>Think of DCV as the remote desktop engine.</p>
 <p>Think of dcvix as the system that decides who can use that engine.</p>
-<div class="highlight"><pre><span></span><code>             dcvix
-   +-----------------------+
-   | Identity              |
-   | Access control        |
-   | Scheduling            |
-   | Session lifecycle     |
-   +-----------------------+
-
-             DCV
-   +-----------------------+
-   | Remote graphics       |
-   | Input handling        |
-   | Secure transport      |
-   | Desktop experience    |
-   +-----------------------+
-</code></pre></div>
+<pre class="mermaid"><code>flowchart TD
+    dcvix["&lt;b&gt;dcvix&lt;/b&gt;&lt;br/&gt;Identity&lt;br/&gt;Access control&lt;br/&gt;Scheduling&lt;br/&gt;Session lifecycle"]
+    DCV["&lt;b&gt;DCV&lt;/b&gt;&lt;br/&gt;Remote graphics&lt;br/&gt;Input handling&lt;br/&gt;Secure transport&lt;br/&gt;Desktop experience"]</code></pre>
 <p>Together they provide a simple, secure, and manageable remote desktop platform.</p>
 
 

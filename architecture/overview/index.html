@@ -541,21 +541,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#agent-auto-registration-flow" class="md-nav__link">
+  <a href="#session-connection-flow" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Agent Auto-Registration Flow
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#certificate-renewal-flow" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Certificate Renewal Flow
+        Session connection flow
       
     </span>
   </a>
@@ -578,6 +567,28 @@
     <span class="md-ellipsis">
       
         Session Lifecycle
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#agent-auto-registration-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent Auto-Registration Flow
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#certificate-renewal-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Certificate Renewal Flow
       
     </span>
   </a>
@@ -1382,21 +1393,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#agent-auto-registration-flow" class="md-nav__link">
+  <a href="#session-connection-flow" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Agent Auto-Registration Flow
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#certificate-renewal-flow" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Certificate Renewal Flow
+        Session connection flow
       
     </span>
   </a>
@@ -1425,6 +1425,28 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#agent-auto-registration-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent Auto-Registration Flow
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#certificate-renewal-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Certificate Renewal Flow
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1444,7 +1466,7 @@
 
   <h1>Overview</h1>
 
-<p>dcvix is a three-component orchestrator for Amazon DCV remote desktops. This page explains the system architecture, component relationships, and key lifecycle flows.</p>
+<p>dcvix is a three-component session broker and server-pool manager for Amazon DCV remote desktops. This page explains the system architecture, component relationships, and key lifecycle flows.</p>
 <h2 id="three-tier-model">Three-Tier Model</h2>
 <pre class="mermaid"><code>flowchart LR
     L[Launcher] -- HTTPS / PASETO --&gt; D[Director]
@@ -1488,6 +1510,89 @@
 </tr>
 </tbody>
 </table>
+<h2 id="session-connection-flow">Session connection flow</h2>
+<pre class="mermaid"><code>flowchart TB
+    User["User"]
+
+    subgraph Client["Client Machine"]
+        direction TB
+        Launcher["dcvix Launcher"]
+        Viewer["DCV Viewer"]
+    end
+
+    subgraph Control["dcvix Control Plane"]
+        Director["dcvix Director"]
+    end
+
+    subgraph DCVHost["DCV Host"]
+        direction TB
+        Agent["dcvix Agent"]
+        DCV["DCV Server&lt;br/&gt;(User Session)"]
+    end
+
+    User --&gt; Launcher
+
+    Launcher &lt;--&gt;|"1-3. Authenticate,&lt;br/&gt;list hosts, select +&lt;br/&gt;request session"| Director
+    Director --&gt;|"4. Create session"| Agent
+    Agent --&gt;|"5. Create"| DCV
+    DCV --&gt;|"6. Ready"| Agent
+    Agent --&gt;|"7. Session info"| Director
+    Director --&gt;|"8. Token + endpoint"| Launcher
+    Launcher --&gt;|"9. Launch with token"| Viewer
+    Viewer --&gt;|"10. Connect + present token"| DCV
+    DCV &lt;--&gt;|"11-12. Validate token"| Director
+    DCV --&gt;|"13. Desktop session"| Viewer</code></pre>
+<p>The dcvix Launcher is the entry point for users. When a user requests a desktop session, the Launcher authenticates with the dcvix Director, which is responsible for authorization and session allocation.</p>
+<p>The Director returns the list of available workstations and pools to the Launcher. The user selects the desired workstation. Then the Launcher asks the Director to create the session. The Director instructs the dcvix Agent running on the selected host to create a new DCV session. Once the session is ready, the Director generates a connection token and returns the required connection information to the Launcher.</p>
+<p>The Launcher starts the DCV Viewer and passes the connection token to it. The DCV Viewer then connects directly to the DCV Server hosting the session.</p>
+<p>During the connection process, the DCV Server validates the token by contacting the dcvix Director. The Director confirms whether the token is valid and authorized, allowing or rejecting the connection.</p>
+<p>This architecture keeps the desktop traffic between the user and the DCV Server, while dcvix only manages authentication, authorization, and session lifecycle operations.</p>
+<h2 id="user-authentication-flow">User Authentication Flow</h2>
+<pre class="mermaid"><code>sequenceDiagram
+    participant User
+    participant Launcher
+    participant Director
+    participant AuthBackend as Auth Backend (PAM/LDAP/...)
+
+    User-&gt;&gt;Launcher: Enter credentials (+ optional OTP)
+    Launcher-&gt;&gt;Director: POST /v1/user/login
+    Director-&gt;&gt;AuthBackend: Authenticate (PAM/LDAP/RADIUS/external)
+    AuthBackend--&gt;&gt;Director: success
+    Director-&gt;&gt;Director: Generate PASETO v4 token (2h expiry)
+    Director--&gt;&gt;Launcher: 200 OK + PASETO token
+    Launcher-&gt;&gt;Launcher: Store token
+    Launcher-&gt;&gt;Director: GET /v1/user/servers (session cookie)
+    Director-&gt;&gt;Director: Verify token, look up policy (users.json)
+    Director--&gt;&gt;Launcher: 200 OK (server list)
+    Launcher-&gt;&gt;User: Display available servers</code></pre>
+<h2 id="session-lifecycle">Session Lifecycle</h2>
+<pre class="mermaid"><code>sequenceDiagram
+    participant User
+    participant Launcher
+    participant Director
+    participant Agent
+    participant DCV as DCV Server
+
+    User-&gt;&gt;Launcher: Select server + session type
+    Launcher-&gt;&gt;Director: Forward request (authenticated)
+    Director-&gt;&gt;Agent: POST /v1/sessions (mTLS)
+    Agent-&gt;&gt;DCV: dcv create-session &lt;params&gt;
+    DCV--&gt;&gt;Agent: Session created
+    Agent--&gt;&gt;Director: 200 OK (session info)
+    Director--&gt;&gt;Launcher: 200 OK (session token)
+    Launcher-&gt;&gt;User: Launch dcvviewer
+
+    Note over Agent: Periodic updates
+    Agent-&gt;&gt;Director: POST /v1/agent/update (sessions + stats)
+    Note over Director: Updates in-memory session state
+
+    User-&gt;&gt;Launcher: Close session
+    Launcher-&gt;&gt;Director: DELETE /v1/sessions/{id}
+    Director-&gt;&gt;Agent: DELETE /v1/sessions/{id} (mTLS)
+    Agent-&gt;&gt;DCV: dcv close-session &lt;id&gt;
+    DCV--&gt;&gt;Agent: Session closed
+    Agent--&gt;&gt;Director: 200 OK
+    Director--&gt;&gt;Launcher: 200 OK</code></pre>
 <h2 id="agent-auto-registration-flow">Agent Auto-Registration Flow</h2>
 <p>On first startup, an agent has no certificate. It generates a key pair and GUID locally, then registers with the director via a retry loop. The private key never leaves the agent.</p>
 <pre class="mermaid"><code>sequenceDiagram
@@ -1542,52 +1647,6 @@
     Director--&gt;&gt;Agent: 200 OK (signed cert)
     Agent-&gt;&gt;Agent: Store new agent.crt</code></pre>
 <p>The mTLS server uses a <code>GetCertificate</code> callback so the renewed cert is picked up without restarting the listener.</p>
-<h2 id="user-authentication-flow">User Authentication Flow</h2>
-<pre class="mermaid"><code>sequenceDiagram
-    participant User
-    participant Launcher
-    participant Director
-    participant AuthBackend as Auth Backend (PAM/LDAP/...)
-
-    User-&gt;&gt;Launcher: Enter credentials (+ optional OTP)
-    Launcher-&gt;&gt;Director: POST /v1/user/login
-    Director-&gt;&gt;AuthBackend: Authenticate (PAM/LDAP/RADIUS/external)
-    AuthBackend--&gt;&gt;Director: success
-    Director-&gt;&gt;Director: Generate PASETO v4 token (2h expiry)
-    Director--&gt;&gt;Launcher: 200 OK + PASETO token
-    Launcher-&gt;&gt;Launcher: Store token
-    Launcher-&gt;&gt;Director: GET /v1/user/servers (session cookie)
-    Director-&gt;&gt;Director: Verify token, look up policy (users.json)
-    Director--&gt;&gt;Launcher: 200 OK (server list)
-    Launcher-&gt;&gt;User: Display available servers</code></pre>
-<h2 id="session-lifecycle">Session Lifecycle</h2>
-<pre class="mermaid"><code>sequenceDiagram
-    participant User
-    participant Launcher
-    participant Director
-    participant Agent
-    participant DCV as DCV Server
-
-    User-&gt;&gt;Launcher: Select server + session type
-    Launcher-&gt;&gt;Director: Forward request (authenticated)
-    Director-&gt;&gt;Agent: POST /v1/sessions (mTLS)
-    Agent-&gt;&gt;DCV: dcv create-session &lt;params&gt;
-    DCV--&gt;&gt;Agent: Session created
-    Agent--&gt;&gt;Director: 200 OK (session info)
-    Director--&gt;&gt;Launcher: 200 OK (session token)
-    Launcher-&gt;&gt;User: Launch dcvviewer
-
-    Note over Agent: Periodic updates
-    Agent-&gt;&gt;Director: POST /v1/agent/update (sessions + stats)
-    Note over Director: Updates in-memory session state
-
-    User-&gt;&gt;Launcher: Close session
-    Launcher-&gt;&gt;Director: DELETE /v1/sessions/{id}
-    Director-&gt;&gt;Agent: DELETE /v1/sessions/{id} (mTLS)
-    Agent-&gt;&gt;DCV: dcv close-session &lt;id&gt;
-    DCV--&gt;&gt;Agent: Session closed
-    Agent--&gt;&gt;Director: 200 OK
-    Director--&gt;&gt;Launcher: 200 OK</code></pre>
 
 
 
