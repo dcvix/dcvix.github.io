@@ -6,7 +6,7 @@ This section covers everything you need to install, configure, and run your firs
 - One or more Linux or Windows workstations with Amazon DCV installed for **agents**
 - End-user desktops (Linux, Windows, or macOS) for the **launcher**
 
-## Flow
+## Installation flow
 
 ```mermaid
 flowchart TD

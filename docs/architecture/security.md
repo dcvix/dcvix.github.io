@@ -157,7 +157,7 @@ The housekeeper runs two cleanup loops:
 
 | Concern | Mitigation |
 |---------|------------|
-| Agent private key exposure | Ed25519 key, `0600` permissions, dedicated service user |
+| Agent private key exposure | Ed25519 key, `0600` permissions, stored only on agent filesystem  |
 | CA key exposure | `0600` permissions, stored only on director filesystem, no config field |
 | Token forgery | PASETO v4 encrypted tokens, symmetric key from config |
 | Replay attacks | Token expiry (2h), CSR proof-of-possession per registration |
