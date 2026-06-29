@@ -55,8 +55,8 @@ Using docker or podman:
 podman run -it --rm -v "$PWD":/workspace rockylinux:9 bash
 dnf install -y rpm-build rpmdevtools make gcc systemd systemd-rpm-macros pam-devel npm
 alias ll='ls -lah'
-curl -L -O https://go.dev/dl/go1.24.4.linux-amd64.tar.gz
-tar -C /usr/local -xzf go1.24.4.linux-amd64.tar.gz
+curl -L -O https://go.dev/dl/go1.26.3.linux-amd64.tar.gz
+tar -C /usr/local -xzf go1.26.3.linux-amd64.tar.gz
 export PATH=$PATH:/usr/local/go/bin
 cd /workspace
 make rpm
@@ -70,8 +70,8 @@ Using docker or podman:
 podman run -it --rm -v "$PWD":/workspace ubuntu:24.04 bash
 apt update
 apt install -y ca-certificates make curl
-curl -L -O https://go.dev/dl/go1.24.4.linux-amd64.tar.gz
-tar -C /usr/local -xzf go1.24.4.linux-amd64.tar.gz
+curl -L -O https://go.dev/dl/go1.26.3.linux-amd64.tar.gz
+tar -C /usr/local -xzf go1.26.3.linux-amd64.tar.gz
 export PATH=$PATH:/usr/local/go/bin
 cd /workspace
 make deb
