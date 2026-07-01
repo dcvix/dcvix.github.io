@@ -1119,23 +1119,6 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Building from Source">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#building-packages" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Building Packages
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
     </ul>
@@ -1630,23 +1613,6 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Building from Source">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#building-packages" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Building Packages
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
     </ul>
@@ -1856,20 +1822,6 @@ sudo<span class="w"> </span>firewall-cmd<span class="w"> </span>--reload
 Without <code>token_key</code> in the config, all user sessions become invalid on restart.</p>
 <h2 id="building-from-source">Building from Source</h2>
 <p>See <a href="../../getting-started/installation/#build-from-source">Installation &gt; Build from Source</a> for build requirements and commands.</p>
-<h3 id="building-packages">Building Packages</h3>
-<p>Using docker or podman for reproducible builds:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># Rocky Linux RPM</span>
-podman<span class="w"> </span>run<span class="w"> </span>-it<span class="w"> </span>--rm<span class="w"> </span>-v<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$PWD</span><span class="s2">&quot;</span>:/workspace<span class="w"> </span>rockylinux:9<span class="w"> </span>bash
-dnf<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>rpm-build<span class="w"> </span>rpmdevtools<span class="w"> </span>make<span class="w"> </span>gcc<span class="w"> </span>systemd<span class="w"> </span>systemd-rpm-macros<span class="w"> </span>pam-devel<span class="w"> </span>npm
-<span class="c1"># ... install Go, then:</span>
-make<span class="w"> </span>rpm
-
-<span class="c1"># Ubuntu DEB</span>
-podman<span class="w"> </span>run<span class="w"> </span>-it<span class="w"> </span>--rm<span class="w"> </span>-v<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$PWD</span><span class="s2">&quot;</span>:/workspace<span class="w"> </span>ubuntu:24.04<span class="w"> </span>bash
-apt<span class="w"> </span>update<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>ca-certificates<span class="w"> </span>make<span class="w"> </span>curl
-<span class="c1"># ... install Go, then:</span>
-make<span class="w"> </span>deb
-</code></pre></div>
 
 
 
