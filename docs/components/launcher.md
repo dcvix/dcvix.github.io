@@ -1,6 +1,6 @@
 The launcher is the GUI client that runs on the user's computer. It authenticates users against the director, displays available DCV servers, and launches the DCV viewer.
 
-![dcvix Launcher](../assets/images/launcher_01.png)
+<img src="../../assets/images/launcher_01.png" width="200" alt="dcvix Launcher">
 
 Written in Go with the Fyne toolkit, it runs on Linux, Windows and macOS.
 
