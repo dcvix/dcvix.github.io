@@ -136,21 +136,3 @@ Without `token_key` in the config, all user sessions become invalid on restart.
 ## Building from Source
 
 See [Installation > Build from Source](../getting-started/installation.md#build-from-source) for build requirements and commands.
-
-### Building Packages
-
-Using docker or podman for reproducible builds:
-
-```bash
-# Rocky Linux RPM
-podman run -it --rm -v "$PWD":/workspace rockylinux:9 bash
-dnf install -y rpm-build rpmdevtools make gcc systemd systemd-rpm-macros pam-devel npm
-# ... install Go, then:
-make rpm
-
-# Ubuntu DEB
-podman run -it --rm -v "$PWD":/workspace ubuntu:24.04 bash
-apt update && apt install -y ca-certificates make curl
-# ... install Go, then:
-make deb
-```
