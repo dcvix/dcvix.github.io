@@ -26,39 +26,28 @@ To build the frontend separately:
 make frontend
 ```
 
-## Run
-
-```bash
-make run
-```
-
 ## Make Targets
 
 | Target | Description |
 |--------|-------------|
 | `build` | Build frontend + Go binary |
 | `frontend` | Build only the React frontend |
-| `run` | Build and run |
-| `test` | Run tests |
-| `audit` | Run quality checks: `go mod tidy -diff`, `go mod verify`, `gofmt`, `go vet`, `staticcheck`, `govulncheck` |
+| `audit` | Run quality checks |
 | `clean` | Remove build artifacts |
 | `deb` | Build Debian package |
 | `rpm` | Build RPM package |
 
 ## Building Packages
 
-### RockyLinux RPM
+### Rocky Linux / RHEL RPM
 
 Using docker or podman:
 
 ```bash
-podman run -it --rm -v "$PWD":/workspace rockylinux:9 bash
-dnf install -y rpm-build rpmdevtools make gcc systemd systemd-rpm-macros pam-devel npm
-alias ll='ls -lah'
-curl -L -O https://go.dev/dl/go1.26.3.linux-amd64.tar.gz
-tar -C /usr/local -xzf go1.26.3.linux-amd64.tar.gz
+podman run -it --rm -v "$PWD":/workspace -w /workspace rockylinux:9 bash
+dnf install -y bash rpm-build systemd systemd-rpm-macros rpmdevtools make gcc which git golang pam-devel npm
+curl -L https://go.dev/dl/go1.26.3.linux-amd64.tar.gz | tar -zx -C /usr/local
 export PATH=$PATH:/usr/local/go/bin
-cd /workspace
 make rpm
 ```
 
@@ -67,13 +56,10 @@ make rpm
 Using docker or podman:
 
 ```bash
-podman run -it --rm -v "$PWD":/workspace ubuntu:24.04 bash
-apt update
-apt install -y ca-certificates make curl
-curl -L -O https://go.dev/dl/go1.26.3.linux-amd64.tar.gz
-tar -C /usr/local -xzf go1.26.3.linux-amd64.tar.gz
+podman run -it --rm -v "$PWD":/workspace -w /workspace ubuntu:24.04 bash
+apt update && apt install -y ca-certificates make curl git
+curl -L https://go.dev/dl/go1.26.3.linux-amd64.tar.gz | tar -zx -C /usr/local
 export PATH=$PATH:/usr/local/go/bin
-cd /workspace
 make deb
 ```
 

@@ -14,23 +14,16 @@ sudo apt-get install gcc libgl1-mesa-dev xorg-dev
 ```bash
 go install fyne.io/tools/cmd/fyne@latest
 go mod tidy
-make
+make build
 ```
 
 Before building, a custom default configuration can be embedded in the binary by editing `internal/config/dcvix-launcher.conf.default`. This lets you ship the launcher with pre-configured broker URL, viewer command, or other settings out of the box.
-
-## Run
-
-```bash
-make run
-```
 
 ## Make Targets
 
 | Target | Description |
 |--------|-------------|
-| `build-linux` | Build Linux binary |
-| `run` | Build and run |
+| `build` | Build binary (all supported platforms) |
 | `clean` | Remove build artifacts |
 | `installer` | Build Windows NSIS installer |
 | `deb` | Build Debian package |
@@ -47,19 +40,19 @@ make build-windows-cross
 
 ## Building Packages
 
-### RockyLinux RPM
+### Rocky Linux / RHEL RPM
 
 Using docker or podman:
 
 ```bash
-podman run -it --rm -v "$PWD":/workspace rockylinux:9 bash
+podman run -it --rm -v "$PWD":/workspace -w /workspace rockylinux:9 bash
 dnf install -y 'dnf-command(config-manager)'
 dnf config-manager --set-enabled crb
 dnf install -y \
-    golang \
     gcc \
     rpm-build \
     make \
+    git \
     which \
     desktop-file-utils \
     libX11-devel \
@@ -73,7 +66,6 @@ dnf install -y \
     libXxf86vm-devel
 curl -L https://go.dev/dl/go1.26.3.linux-amd64.tar.gz | tar -zx -C /usr/local
 export PATH=/usr/local/go/bin:$PATH
-cd /workspace
 make rpm
 ```
 
@@ -82,13 +74,10 @@ make rpm
 Using docker or podman:
 
 ```bash
-podman run -it --rm -v "$PWD":/workspace ubuntu:24.04 bash
-apt update
-apt install -y ca-certificates make curl
-curl -L -O https://go.dev/dl/go1.26.3.linux-amd64.tar.gz
-tar -C /usr/local -xzf go1.26.3.linux-amd64.tar.gz
+podman run -it --rm -v "$PWD":/workspace -w /workspace ubuntu:24.04 bash
+apt update && apt install -y ca-certificates make curl git
+curl -L https://go.dev/dl/go1.26.3.linux-amd64.tar.gz | tar -zx -C /usr/local
 export PATH=$PATH:/usr/local/go/bin
-cd /workspace
 make deb
 ```
 

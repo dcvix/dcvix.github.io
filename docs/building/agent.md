@@ -10,24 +10,19 @@ make build
 
 Before building, a custom default configuration can be embedded in the binary by editing `internal/config/dcvix-agent.conf.default`. This lets you ship agents with pre-configured `director_host`, tags, or other settings out of the box.
 
-## Run
-
-```bash
-make run
-```
-
 ## Make Targets
 
 | Target | Description |
 |--------|-------------|
-| `build` | Build binary (platform-agnostic) |
-| `run` | Build and run |
+| `build` | Build binary (all supported platforms) |
 | `clean` | Remove build artifacts |
 | `installer` | Build Windows NSIS installer |
+| `deb` | Build Debian package |
+| `rpm` | Build RPM package |
 
 ## Building Packages
 
-### RockyLinux RPM
+### Rocky Linux / RHEL RPM
 
 Using docker or podman:
 
@@ -37,18 +32,23 @@ podman run -it --rm -v "$PWD":/workspace -w /workspace go-rpm-build bash
 make rpm
 ```
 
+```bash
+podman run -it --rm -v "$PWD":/workspace -w /workspace rockylinux:9
+dnf install -y bash rpm-build systemd systemd-rpm-macros rpmdevtools make gcc which git golang
+curl -L https://go.dev/dl/go1.26.3.linux-amd64.tar.gz | tar -zx -C /usr/local
+export PATH=$PATH:/usr/local/go/bin
+make rpm
+```
+
 ### Ubuntu DEB
 
 Using docker or podman:
 
 ```bash
-podman run -it --rm -v "$PWD":/workspace ubuntu:24.04 bash
-apt update
-apt install -y ca-certificates make curl
-curl -L -O https://go.dev/dl/go1.26.3.linux-amd64.tar.gz
-tar -C /usr/local -xzf go1.26.3.linux-amd64.tar.gz
+podman run -it --rm -v "$PWD":/workspace -w /workspace ubuntu:24.04 bash
+apt update && apt install -y ca-certificates make curl git
+curl -L https://go.dev/dl/go1.26.3.linux-amd64.tar.gz | tar -zx -C /usr/local
 export PATH=$PATH:/usr/local/go/bin
-cd /workspace
 make deb
 ```
 
@@ -56,14 +56,14 @@ make deb
 
 Requires NSIS (Nullsoft Scriptable Install System):
 
-```bash
-# On Ubuntu/Debian
-sudo apt install nsis
-# On Fedora
-sudo dnf install mingw32-nsis
-```
+Using docker or podman:
 
 ```bash
+podman run -it --rm -v "$PWD":/workspace -w /workspace ubuntu:24.04 bash
+apt update && apt install -y ca-certificates make curl git nsis p7zip-full 
+curl -L https://go.dev/dl/go1.26.3.linux-amd64.tar.gz | tar -zx -C /usr/local
+export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin
+go install github.com/tc-hib/go-winres@latest
 make installer
 ```
 
