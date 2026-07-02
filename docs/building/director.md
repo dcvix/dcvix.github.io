@@ -48,6 +48,9 @@ podman run -it --rm -v "$PWD":/workspace -w /workspace rockylinux:9 bash
 dnf install -y bash rpm-build systemd systemd-rpm-macros rpmdevtools make gcc which git golang pam-devel npm
 curl -L https://go.dev/dl/go1.26.3.linux-amd64.tar.gz | tar -zx -C /usr/local
 export PATH=$PATH:/usr/local/go/bin
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.5/install.sh | bash
+\. "$HOME/.nvm/nvm.sh"
+nvm install 24
 make rpm
 ```
 
@@ -57,9 +60,12 @@ Using docker or podman:
 
 ```bash
 podman run -it --rm -v "$PWD":/workspace -w /workspace ubuntu:24.04 bash
-apt update && apt install -y ca-certificates make curl git
+apt update && apt install -y ca-certificates make curl git gcc libpam-dev
 curl -L https://go.dev/dl/go1.26.3.linux-amd64.tar.gz | tar -zx -C /usr/local
 export PATH=$PATH:/usr/local/go/bin
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.5/install.sh | bash
+\. "$HOME/.nvm/nvm.sh"
+nvm install 24
 make deb
 ```
 

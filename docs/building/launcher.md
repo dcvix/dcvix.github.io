@@ -75,7 +75,16 @@ Using docker or podman:
 
 ```bash
 podman run -it --rm -v "$PWD":/workspace -w /workspace ubuntu:24.04 bash
-apt update && apt install -y ca-certificates make curl git
+apt update && apt install -y \
+          bc \
+          gcc \
+          libgl1-mesa-dev \
+          libwayland-dev \
+          libx11-dev \
+          libxkbcommon-dev \
+          xorg-dev \
+          xvfb \
+          language-pack-en
 curl -L https://go.dev/dl/go1.26.3.linux-amd64.tar.gz | tar -zx -C /usr/local
 export PATH=$PATH:/usr/local/go/bin
 make deb
